@@ -3,15 +3,128 @@
   <head>
     <meta charset="UTF-8">
     <title>My Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
   <body>
-    <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+            <a class="navbar-brand" href="#">Michael's Portfolio</a>
+            </div>
+            <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="/resume.html">Resume</a></li>
+            <li><a href="#">Gallery</a></li>
+            <li><a href="#">Blog</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a href="https://www.github.com/michaelasp">
+                <img class='img-responsive' src="/images/github.png"width="20" height="20"></img>
+                </a>
+            </li>
+            <li>
+                <a href="https://www.linkedin.com/in/michael-aspinwall-9b8b49185/">
+                <img class='img-responsive' src="/images/linkedin.png"width="20" height="20"></img>
+                </a>
+            </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="content" class="container">
+      <h1>Michael's Portfolio</h1>
+      <a href="https://www.github.com/michaelasp">GitHub</a>
+      <a href="https://www.linkedin.com/in/michael-aspinwall-9b8b49185/">LinkedIn</a>
+      
+      <p>
+        I am a rising junior studying Computer Science with a 
+        concentration in computer systems at Carnegie Mellon 
+        University, my hobbies include mountain biking and video games, 
+        along with basically anything outdoorsy.
+      </p>
+      <p>
+        At school I enjoy competing in hackathons and have even won one of 
+        the ones I attended! The competition is quite fun and it lets me 
+        exercise my coding skills in an environment against my peers and
+        everyone is a winner if they create something they're proud of.
+      </p>
+      
+      <h1> Projects </h1>
+      <div class="panel-group" id="projects">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class=panel-title>
+                    <a data-toggle="collapse" data-parent="#projects" href="#radar">
+                        Radar Material Classifier
+                    </a>
+                </h4>
+            </div>
+          
+                <div class="panel-collapse collapse" id="radar">
+                    <div class="panel-body">
+                            Project done over the course of a semester under the guidance of
+                            my professor for Humanoids, a freeform class where we were 
+                            encouraged to explore whatever interested us in the CS/Robotics
+                            field. Uses TensorFlow and a high frequency radar hosted on a 
+                            Raspberry Pi in order to sense the densities and other characteristics
+                            of a material in order to classify them accordingly. Got to greater than
+                            90 percent accuracy but needed more accurate equipment which unfortunately
+                            could not be acquired due to not being on campus because of coronavirus :(
+                    </div>
+                </div>
+          </div>
+          <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#projects" href="#qr">
+                            QR Enabled ATM
+                        </a>
+                    </h4>
+                </div>
+                <div class="panel-collapse collapse" id="qr">
+                    <div class="panel-body">
+                            Winning hackathon project created at Capital One's  
+                            software engineering summit that takes a qr code generated from
+                            an android app with all the transaction info for a withdrawal
+                            or deposit and updates the users account balance automatically
+                            after tansaction completes. Uses a raspberry pi as the "ATM" 
+                            <br>
+                            <a href="https://github.com/dpakalarry/lowercase1">Github Link</a>
+                    </div>
+                </div>
+          </div>
+          <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#projects" href="#leap">
+                            LeapMotion Base Defence
+                        </a>
+                    </h4>
+                </div>
+          
+                 <div class="panel-collapse collapse" id="leap">
+                    <div class="panel-body">
+                            Hackathon project done at Hack112, a class sponsored hackathon.
+                            Used a LeapMotion hand sensor in order to track hand rotation
+                            which was used in order to rotate a shield to block projectriles
+                            of consistently increasing difficulty. Utilizes threading in
+                            order to play sounds when hit. Players of the game called
+                            it extremely intuitive and fun. <br>
+                            <a href="https://github.com/michaelasp/hack112">Github Link</a>     
+                    </div>
+                </div>
+          </div>
+      </div>
+
+      <img src=/images/me.jpg class="img-rounded" width="500" height="600"></img>
+      <p>Click here to get a random fact about me:</p>
+      <button onclick="addRandomGreeting()" class="btn">Fact</button>
       <div id="greeting-container"></div>
     </div>
   </body>
