@@ -17,7 +17,8 @@
  */
 function addRandomGreeting() {
   const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+      ['I am Russian and Peruvian', 'I\'ve placed 3rd in a mountain bike race', 
+        'I was born in California', 'I love cooking', 'I am a dual citizen, (US/Russia)'];
 
   // Pick a random greeting.
   const greeting = greetings[Math.floor(Math.random() * greetings.length)];
