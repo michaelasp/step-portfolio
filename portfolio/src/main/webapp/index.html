@@ -22,7 +22,6 @@
 
             <li><a href="/resume.html">Resume</a></li>
             <li><a href="/gallery.html">Gallery</a></li>
-            <li><a href="#">Blog</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
             <li>
@@ -45,8 +44,7 @@
       <p>
         I am a rising junior studying Computer Science with a 
         concentration in computer systems at Carnegie Mellon 
-        University, my hobbies include mountain biking and video games, 
-        along with basically anything outdoorsy.
+        University. As of right now, I plan to graduate in Spring 2022
       </p>
       <p>
         At school I enjoy competing in hackathons and have even won one of 
@@ -54,7 +52,15 @@
         exercise my coding skills in an environment against my peers and
         everyone is a winner if they create something they're proud of.
       </p>
-      
+      <p>
+        Outside of school, I love to mountain bike and play video games. However anything that 
+        is outdoorsy is fair game to me. Mountain biking is definitely where I spend much of my free
+        time outside of school and programming. My competitive drive even lead me to participate in several 
+        races, one of which I placed third in. The sense of community in the mountain bike community is like no 
+        other and I feel at home there.
+        With friends I go out to explore the city of Pittsburgh where there
+        are many things to do, be it museums or something else. 
+      </p>
       <h1> Projects </h1>
       <div class="panel-group" id="projects">
           <div class="panel panel-default">
@@ -112,7 +118,7 @@
                     <div class="panel-body">
                             Hackathon project done at Hack112, a class sponsored hackathon.
                             Used a LeapMotion hand sensor in order to track hand rotation
-                            which was used in order to rotate a shield to block projectriles
+                            which was used in order to rotate a shield to block projectiles
                             of consistently increasing difficulty. Utilizes threading in
                             order to play sounds when hit. Players of the game called
                             it extremely intuitive and fun. <br>
@@ -120,9 +126,26 @@
                     </div>
                 </div>
           </div>
+          <div class="panel panel-default">
+              <div class="panel-heading">
+                  <h4 class="panel-title">
+                      <a data-toggle="collapse" data-parent="#projects" href="#gps">
+                          GPS Loop Detection
+                      </a>
+                  </h4>
+              </div>
+              <div class="panel-collapse collapse" id="gps">
+                  <div class="panel-body">
+                      Final term project in which I created an application where someone could 
+                      take a gpx recording of some outdoor activity such as mountain biking or
+                      hiking and the application would find all the differing loops in the trail and 
+                      categorize them according to difficulty. This was all stored in a backend SQL 
+                      database where multiple users could store their gps data seperately and could be 
+                      selected upon login.
+                  </div>
+              </div>
+          </div>
       </div>
-
-      <img src=/images/me.jpg class="img-rounded" width="500" height="600"></img>
       <p>Click here to get a random fact about me:</p>
       <button onclick="addRandomGreeting()" class="btn">Fact</button>
       <div id="greeting-container"></div>
