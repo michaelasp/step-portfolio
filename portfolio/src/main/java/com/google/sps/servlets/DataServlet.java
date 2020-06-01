@@ -26,6 +26,11 @@ import com.google.gson.Gson;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+  private class Comment {
+      String name;
+      String text;
+  }
+
   private List<String> facts;
   private List<String> comments;
   @Override
@@ -47,5 +52,24 @@ public class DataServlet extends HttpServlet {
     String json = arrayToJSON(comments);
     response.setContentType("text/html;");
     response.getWriter().println(json);
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    Gson gson = new Gson();
+    Comment comment = new Comment();
+    comment.name = getParameter(request, "commenter");
+    comment.text = getParameter(request, "comment");
+    
+
+    response.setContentType("text/html;");
+    response.getWriter().println("Done");
+  }
+
+  private String getParameter(HttpServletRequest request, String name) {
+    String value = request.getParameter(name);
+    if (value == null) {
+      return "";
+    }
+    return value;
   }
 }
