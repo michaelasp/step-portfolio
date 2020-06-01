@@ -24,7 +24,7 @@ function addRandomGreeting() {
   const greeting = greetings[Math.floor(Math.random() * greetings.length)];
 
   // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
+  const greetingContainer = document.getElementById('fact-container');
   greetingContainer.innerText = greeting;
 }
 
@@ -36,7 +36,20 @@ function fetchFact(){
 
 function createCommentDiv(comment) {
     let commentDiv = document.createElement("div");
-    commentDiv.innerHTML = comment;
+    let mediaBody = document.createElement("div");
+    let user = document.createElement("h4");
+    let commentText = document.createElement("p");
+
+    commentDiv.className = "media well";
+    mediaBody.className = "media-body";
+    user.className = "media-heading";
+    user.innerText = comment.name;
+    commentText.innerText = comment.text;
+
+    commentDiv.append(mediaBody);
+    mediaBody.append(user);
+    mediaBody.append(commentText);
+
     return commentDiv;
 }   
 
