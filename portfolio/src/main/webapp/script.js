@@ -33,3 +33,19 @@ function fetchFact(){
         document.getElementById("fact-container").innerText = fact;
     });
 }
+
+function createCommentDiv(comment) {
+    let commentDiv = document.createElement("div");
+    commentDiv.innerHTML = comment;
+    return commentDiv;
+}   
+
+function fetchComments() {
+    fetch("/data").then(response => response.json()).then((comments) => {
+        console.log(comments);
+        let commentElem = document.getElementById("comments");
+        comments.forEach(comment => {
+            commentElem.append(createCommentDiv(comment))
+        });
+    });
+}
