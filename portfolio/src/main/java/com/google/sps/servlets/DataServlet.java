@@ -14,6 +14,8 @@
 
 package com.google.sps.servlets;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,10 +25,22 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+  private List<String> facts;
+
+  @Override
+  public void init() {
+    facts = new ArrayList<>();
+    facts.add("I am Russian and Peruvian");
+    facts.add("I've placed 3rd in a mountain bike race");
+    facts.add("I was born in California");
+    facts.add("I love cooking");
+    facts.add("I am a dual citizen, (US/Russia)");
+  }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String fact = facts.get((int) (Math.random() * facts.size()));
     response.setContentType("text/html;");
-    response.getWriter().println("<h1>Hello Michael!</h1>");
+    response.getWriter().println(fact);
   }
 }
