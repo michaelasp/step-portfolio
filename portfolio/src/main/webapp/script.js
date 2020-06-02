@@ -54,7 +54,7 @@ function createCommentDiv(comment) {
 }   
 
 function fetchComments() {
-    fetch("/data").then(response => response.json()).then((comments) => {
+    fetch("/data?amount=2").then(response => response.json()).then((comments) => {
         console.log(comments);
         let commentElem = document.getElementById("comments");
         comments.forEach(comment => {
