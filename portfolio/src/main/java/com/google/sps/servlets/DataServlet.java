@@ -21,7 +21,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.google.gson.Gson;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -60,8 +65,19 @@ public class DataServlet extends HttpServlet {
     comment.text = getParameter(request, "comment");
     
     comments.add(comment);
+    addCommentData(comment);
+
     response.setContentType("text/html;");
     response.getWriter().println("Done");
+  }
+
+  private void addCommentData(Comment comment) {
+      Entity commentEntity = new Entity("comment");
+      commentEntity.setProperty("name", comment.name);
+      commentEntity.setProperty("text", comment.text);
+
+      DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
+      dataStore.put(commentEntity);
   }
 
   private String getParameter(HttpServletRequest request, String name) {
