@@ -35,6 +35,9 @@ import com.google.appengine.api.datastore.Entity;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+
+  private static final int DEFAULT_COMMENTS = 2;
+
   private class Comment {
       String name;
       String text;
@@ -63,10 +66,10 @@ public class DataServlet extends HttpServlet {
     try {
         requestAmount = Integer.parseInt(request.getParameter("amount"));
     } catch (NumberFormatException e) {
-        requestAmount = 0;
+        requestAmount = DEFAULT_COMMENTS;
     }
     if(requestAmount < 0) {
-        requestAmount = 0;
+        requestAmount = DEFAULT_COMMENTS;
     }
     //Reduce request size to be the comments size to not get exception
     if(requestAmount > comments.size()) {
