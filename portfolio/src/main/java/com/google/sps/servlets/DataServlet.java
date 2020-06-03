@@ -24,6 +24,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -38,6 +42,7 @@ public class DataServlet extends HttpServlet {
 
   private List<String> facts;
   private List<Comment> comments;
+  private boolean dataLoaded;
   @Override
   public void init() {
     comments = new ArrayList<>();
@@ -51,6 +56,10 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    if (!dataLoaded) {
+        loadCommentData();
+        dataLoaded = true;
+    }
     String json = arrayToJSON(comments);
     response.setContentType("text/html;");
     response.getWriter().println(json);
@@ -78,6 +87,21 @@ public class DataServlet extends HttpServlet {
 
       DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
       dataStore.put(commentEntity);
+  }
+
+  private void loadCommentData() {
+      DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
+
+      Query query = new Query("comment");
+      PreparedQuery results = dataStore.prepare(query);
+
+      for (Entity entity : results.asIterable()) {
+          Comment comment = new Comment();
+          comment.name = (String) entity.getProperty("name");
+          comment.text = (String) entity.getProperty("text");
+
+          comments.add(comment);
+      }
   }
 
   private String getParameter(HttpServletRequest request, String name) {
