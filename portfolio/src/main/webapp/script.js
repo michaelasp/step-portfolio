@@ -64,3 +64,14 @@ function fetchComments(amount) {
         });
     });
 }
+
+function clearComments() {
+    let commentElem = document.getElementById("comments");
+    commentElem.innerHTML = "";
+}
+
+function deleteComments() {
+    if (confirm("Are you sure?")) {
+        fetch("/delete-data", {method : "POST"}).then(clearComments());   
+    }   
+}

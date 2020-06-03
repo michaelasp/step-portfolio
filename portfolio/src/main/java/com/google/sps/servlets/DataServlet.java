@@ -59,9 +59,9 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    if (!loaded) {
-        loadCommentData(request);
-    }
+    
+    loadCommentData(request);
+    
     int requestAmount;
     try {
         requestAmount = Integer.parseInt(request.getParameter("amount"));
@@ -84,15 +84,14 @@ public class DataServlet extends HttpServlet {
     Gson gson = new Gson();
 
     //Creates a comment for every post request
+
     Comment comment = new Comment();
     comment.name = getParameter(request, "commenter");
     comment.text = getParameter(request, "comment");
     
     comments.add(comment);
     addCommentData(comment);
-
-    response.setContentType("text/html;");
-    response.getWriter().println("Done");
+    response.sendRedirect("/");
   }
 
   private void addCommentData(Comment comment) {
@@ -104,6 +103,7 @@ public class DataServlet extends HttpServlet {
       dataStore.put(commentEntity);
   }
 
+  
   private void loadCommentData(HttpServletRequest request) {
       comments.clear();
       DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
@@ -115,7 +115,6 @@ public class DataServlet extends HttpServlet {
           Comment comment = new Comment();
           comment.name = (String) entity.getProperty("name");
           comment.text = (String) entity.getProperty("text");
-
           comments.add(comment);
       }
   }
