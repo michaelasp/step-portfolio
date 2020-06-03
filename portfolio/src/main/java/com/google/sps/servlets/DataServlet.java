@@ -32,16 +32,13 @@ public class DataServlet extends HttpServlet {
   }
 
   private List<String> facts;
-  private List<String> comments;
+  private List<Comment> comments;
   @Override
   public void init() {
     comments = new ArrayList<>();
-    comments.add("Hello World");
-    comments.add("JSON is Cool");
-    comments.add("Something");
   }
 
-  private String arrayToJSON(List<String> strList) {
+  private String arrayToJSON(List<Comment> strList) {
     Gson gson = new Gson();
     String json = gson.toJson(strList);
     return json;
@@ -56,11 +53,13 @@ public class DataServlet extends HttpServlet {
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Gson gson = new Gson();
+
+    //Creates a comment for every post request
     Comment comment = new Comment();
     comment.name = getParameter(request, "commenter");
     comment.text = getParameter(request, "comment");
     
-
+    comments.add(comment);
     response.setContentType("text/html;");
     response.getWriter().println("Done");
   }
