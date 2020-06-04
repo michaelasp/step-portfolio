@@ -14,23 +14,20 @@
 
 package com.google.sps.servlets;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.gson.Gson;
-
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.SortDirection;
-
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -38,14 +35,26 @@ public class DataServlet extends HttpServlet {
 
   private static final int DEFAULT_COMMENTS = 2;
 
-  private class Comment {
-      String name;
-      String text;
+  private class Comment implements Comparable<Comment> {
+    String name;
+    String text;
+    long timestamp;
+
+    @Override
+    public int compareTo(Comment otherComment) {
+      // Compares in descending order in order to get newest comments first
+      if (this.timestamp >= otherComment.timestamp) {
+        return -1;
+      } else {
+        return 1;
+      }
+    }
   }
 
   private List<String> facts;
   private List<Comment> comments;
   boolean loaded = false;
+
   @Override
   public void init() {
     comments = new ArrayList<>();
@@ -53,28 +62,30 @@ public class DataServlet extends HttpServlet {
 
   private String arrayToJSON(List<Comment> strList) {
     Gson gson = new Gson();
+
     String json = gson.toJson(strList);
     return json;
   }
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
+
     loadCommentData(request);
-    
+
     int requestAmount;
     try {
-        requestAmount = Integer.parseInt(request.getParameter("amount"));
+      requestAmount = Integer.parseInt(request.getParameter("amount"));
     } catch (NumberFormatException e) {
-        requestAmount = DEFAULT_COMMENTS;
+      requestAmount = DEFAULT_COMMENTS;
     }
-    if(requestAmount < 0) {
-        requestAmount = DEFAULT_COMMENTS;
+    if (requestAmount < 0) {
+      requestAmount = DEFAULT_COMMENTS;
     }
-    //Reduce request size to be the comments size to not get exception
-    if(requestAmount > comments.size()) {
-        requestAmount = comments.size();
+    // Reduce request size to be the comments size to not get exception
+    if (requestAmount > comments.size()) {
+      requestAmount = comments.size();
     }
+    Collections.sort(comments);
     String json = arrayToJSON(comments.subList(0, requestAmount));
     response.setContentType("text/html;");
     response.getWriter().println(json);
@@ -83,40 +94,41 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Gson gson = new Gson();
 
-    //Creates a comment for every post request
+    // Creates a comment for every post request
 
     Comment comment = new Comment();
     comment.name = getParameter(request, "commenter");
     comment.text = getParameter(request, "comment");
-    
+    comment.timestamp = System.currentTimeMillis();
+
     comments.add(comment);
     addCommentData(comment);
     response.sendRedirect("/comments.html");
   }
 
   private void addCommentData(Comment comment) {
-      Entity commentEntity = new Entity("comment");
-      commentEntity.setProperty("name", comment.name);
-      commentEntity.setProperty("text", comment.text);
-
-      DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
-      dataStore.put(commentEntity);
+    Entity commentEntity = new Entity("comment");
+    commentEntity.setProperty("name", comment.name);
+    commentEntity.setProperty("text", comment.text);
+    commentEntity.setProperty("timestamp", comment.timestamp);
+    DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
+    dataStore.put(commentEntity);
   }
 
-  
   private void loadCommentData(HttpServletRequest request) {
-      comments.clear();
-      DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
-      
-      Query query = new Query("comment");
-      PreparedQuery results = dataStore.prepare(query);
-      
-      for (Entity entity : results.asIterable()) {
-          Comment comment = new Comment();
-          comment.name = (String) entity.getProperty("name");
-          comment.text = (String) entity.getProperty("text");
-          comments.add(comment);
-      }
+    comments.clear();
+    DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
+
+    Query query = new Query("comment");
+    PreparedQuery results = dataStore.prepare(query);
+
+    for (Entity entity : results.asIterable()) {
+      Comment comment = new Comment();
+      comment.name = (String) entity.getProperty("name");
+      comment.text = (String) entity.getProperty("text");
+      comment.timestamp = (long) entity.getProperty("timestamp");
+      comments.add(comment);
+    }
   }
 
   private String getParameter(HttpServletRequest request, String name) {

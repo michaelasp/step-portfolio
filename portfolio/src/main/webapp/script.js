@@ -39,11 +39,13 @@ function createCommentDiv(comment) {
     let mediaBody = document.createElement("div");
     let user = document.createElement("h4");
     let commentText = document.createElement("p");
+    let date = new Date(comment.timestamp).toLocaleTimeString("en-US")
+    console.log(date);
 
     commentDiv.className = "media well";
     mediaBody.className = "media-body";
     user.className = "media-heading";
-    user.innerText = comment.name;
+    user.innerHTML = comment.name + " <i><small>at " + date + "</small></i>";
     commentText.innerText = comment.text;
 
     commentDiv.append(mediaBody);
