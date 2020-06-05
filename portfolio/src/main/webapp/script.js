@@ -55,16 +55,41 @@ function createCommentDiv(comment) {
     return commentDiv;
 }   
 
-function fetchComments(amount) {
-    console.log(amount);
-    let commentElem = document.getElementById("comments");
-    commentElem.innerHTML = "";
-    fetch(`/data?amount=${amount}`).then(response => response.json()).then((comments) => {
-        console.log(comments);
-        comments.forEach(comment => {
-            commentElem.append(createCommentDiv(comment));
-        });
+let pageNumber = 0;
+let commentAmount = 2;
+
+function updateNumber(delta) {
+    pageNumber += delta;
+    let numberElem = document.getElementById("pageNum");
+    fetchComments().then(ret => {
+       if (!ret || pageNumber < 0) {
+            pageNumber -= delta;
+        }
+        numberElem.innerHTML = pageNumber+1;
     });
+}
+
+function updateAmount(amount) {
+    commentAmount = amount;
+    fetchComments();
+}
+
+async function fetchComments() {
+    let commentElem = document.getElementById("comments");
+    return fetch(`/data?amount=${commentAmount}&page=${pageNumber}`).then(response => response.json()).then((comments) => {
+        console.log(comments);
+        if (Array.isArray(comments) && (comments.length !== 0)) {
+            commentElem.innerHTML = "";
+            returnVal = true;
+            comments.forEach(comment => {
+                commentElem.append(createCommentDiv(comment));
+            });
+            return true;
+        } else {
+            return false;
+        }
+
+    })
 }
 
 function clearComments() {
@@ -77,3 +102,4 @@ function deleteComments() {
         fetch("/delete-data", {method : "POST"}).then(clearComments());   
     }   
 }
+
