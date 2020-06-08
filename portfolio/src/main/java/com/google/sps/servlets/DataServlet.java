@@ -73,10 +73,17 @@ public class DataServlet extends HttpServlet {
     loadCommentData(request);
 
     int requestAmount;
+    int pageNumber;
     try {
       requestAmount = Integer.parseInt(request.getParameter("amount"));
     } catch (NumberFormatException e) {
       requestAmount = DEFAULT_COMMENTS;
+    }
+
+    try {
+      pageNumber = Integer.parseInt(request.getParameter("page"));
+    } catch (NumberFormatException e) {
+      pageNumber = 0;
     }
     if (requestAmount < 0) {
       requestAmount = DEFAULT_COMMENTS;
@@ -85,8 +92,23 @@ public class DataServlet extends HttpServlet {
     if (requestAmount > comments.size()) {
       requestAmount = comments.size();
     }
+
+    int offsetAmount = pageNumber * requestAmount;
+    if (offsetAmount < 0) {
+      offsetAmount = 0;
+    }
+    if (offsetAmount > comments.size()) {
+      offsetAmount = comments.size();
+    }
+
+    if (requestAmount + offsetAmount > comments.size()) {
+      requestAmount = comments.size();
+    } else {
+      requestAmount += offsetAmount;
+    }
+
     Collections.sort(comments);
-    String json = arrayToJSON(comments.subList(0, requestAmount));
+    String json = arrayToJSON(comments.subList(offsetAmount, requestAmount));
     response.setContentType("text/html;");
     response.getWriter().println(json);
   }
