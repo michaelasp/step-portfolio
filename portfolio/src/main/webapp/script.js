@@ -58,6 +58,20 @@ function createCommentDiv(comment) {
 let pageNumber = 0;
 let commentAmount = 2;
 
+function initPage() {
+    fetch("/image-upload").then(
+        (response) => {
+            response.text();
+        })
+    .then(
+        (imageUrl) => {
+            let formElem = document.getElementById("comment-form");
+            formElem.action = imageUrl;
+            formElem.classList.remove("hidden");
+        } 
+    )
+}
+
 function updateNumber(delta) {
     pageNumber += delta;
     let numberElem = document.getElementById("pageNum");
