@@ -91,7 +91,7 @@ public class DataServlet extends HttpServlet {
     
     comments.add(comment);
     addCommentData(comment);
-    response.sendRedirect("/");
+    response.sendRedirect("/comments.html");
   }
 
   private void addCommentData(Comment comment) {
