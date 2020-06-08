@@ -94,6 +94,9 @@ async function fetchComments() {
 
 function clearComments() {
     let commentElem = document.getElementById("comments");
+    let numberElem = document.getElementById("pageNum");
+    pageNumber = 0;
+    numberElem.innerHTML = "1";
     commentElem.innerHTML = "";
 }
 
