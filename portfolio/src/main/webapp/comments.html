@@ -12,7 +12,7 @@
     <script src="script.js"></script>
   </head>
 
-  <body onload="updateAmount(2)">
+  <body onload="initPage()">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -55,7 +55,7 @@
         <li id="pageNum">1</li> 
         <li><a onclick="updateNumber(1)">Next</a></li>
       </ul>
-      <form class="hidden" id="comment-form" method="POST">
+      <form class="hidden" id="comment-form" method="POST" enctype="multipart/form-data">
           <div class="form-group">
               <label for="nm">Name:</label>
               <input type="text" class="form-control" name="commenter" id="nm">
@@ -64,6 +64,11 @@
               <label for="comment">Comment:</label>
               <textarea class="form-control" rows="3" id="comment" name="comment"></textarea>
           </div>
+          <div class="input-group">
+            <label for=proPic>Upload a profile pic:</label>
+            <input type="file" class="btn btn-default" id="proPic" name="image">
+          </div>
+          <br>
           <button type="submit" class="btn btn-default">Submit</button>
       </form>
       <br>
