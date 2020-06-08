@@ -35,6 +35,9 @@ import com.google.appengine.api.datastore.Entity;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+
+  private static final int DEFAULT_COMMENTS = 2;
+
   private class Comment {
       String name;
       String text;
@@ -42,7 +45,7 @@ public class DataServlet extends HttpServlet {
 
   private List<String> facts;
   private List<Comment> comments;
-  private boolean dataLoaded;
+  boolean loaded = false;
   @Override
   public void init() {
     comments = new ArrayList<>();
@@ -56,11 +59,23 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    if (!dataLoaded) {
-        loadCommentData();
-        dataLoaded = true;
+    if (!loaded) {
+        loadCommentData(request);
     }
-    String json = arrayToJSON(comments);
+    int requestAmount;
+    try {
+        requestAmount = Integer.parseInt(request.getParameter("amount"));
+    } catch (NumberFormatException e) {
+        requestAmount = DEFAULT_COMMENTS;
+    }
+    if(requestAmount < 0) {
+        requestAmount = DEFAULT_COMMENTS;
+    }
+    //Reduce request size to be the comments size to not get exception
+    if(requestAmount > comments.size()) {
+        requestAmount = comments.size();
+    }
+    String json = arrayToJSON(comments.subList(0, requestAmount));
     response.setContentType("text/html;");
     response.getWriter().println(json);
   }
@@ -89,12 +104,13 @@ public class DataServlet extends HttpServlet {
       dataStore.put(commentEntity);
   }
 
-  private void loadCommentData() {
+  private void loadCommentData(HttpServletRequest request) {
+      comments.clear();
       DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
-
+      
       Query query = new Query("comment");
       PreparedQuery results = dataStore.prepare(query);
-
+      
       for (Entity entity : results.asIterable()) {
           Comment comment = new Comment();
           comment.name = (String) entity.getProperty("name");
