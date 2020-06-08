@@ -53,12 +53,14 @@ function createCommentDiv(comment) {
     return commentDiv;
 }   
 
-function fetchComments() {
-    fetch("/data?amount=2").then(response => response.json()).then((comments) => {
+function fetchComments(amount) {
+    console.log(amount);
+    let commentElem = document.getElementById("comments");
+    commentElem.innerHTML = "";
+    fetch(`/data?amount=${amount}`).then(response => response.json()).then((comments) => {
         console.log(comments);
-        let commentElem = document.getElementById("comments");
         comments.forEach(comment => {
-            commentElem.append(createCommentDiv(comment))
+            commentElem.append(createCommentDiv(comment));
         });
     });
 }
