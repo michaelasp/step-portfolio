@@ -14,40 +14,31 @@
 
 package com.google.sps.servlets;
 
-//DataStore classes 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-
-//JSON Parsion
-import com.google.gson.Gson;
-
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-//Web Servlet
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-//Blob Services
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.google.appengine.api.images.ServingUrlOptions;
+import com.google.gson.Gson;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -60,6 +51,7 @@ public class DataServlet extends HttpServlet {
     String text;
     long timestamp;
     String imageUrl;
+
     @Override
     public int compareTo(Comment otherComment) {
       // Compares in descending order in order to get newest comments first
@@ -159,7 +151,6 @@ public class DataServlet extends HttpServlet {
     comment.timestamp = System.currentTimeMillis();
     comment.imageUrl = getFileUrl(request, "image");
 
-
     comments.add(comment);
     addCommentData(comment);
     response.sendRedirect("/comments.html");
@@ -172,12 +163,9 @@ public class DataServlet extends HttpServlet {
     commentEntity.setProperty("timestamp", comment.timestamp);
     commentEntity.setProperty("imageUrl", comment.imageUrl);
 
-
     DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
     dataStore.put(commentEntity);
   }
-
-  
 
   private String getParameter(HttpServletRequest request, String name) {
     String value = request.getParameter(name);
@@ -187,7 +175,10 @@ public class DataServlet extends HttpServlet {
     return value;
   }
 
-  /** Returns a URL that points to the uploaded file, or default profile if the user didn't upload a file. */
+  /**
+   * Returns a URL that points to the uploaded file, or default profile if the user didn't upload a
+   * file.
+   */
   private String getFileUrl(HttpServletRequest request, String formInputElementName) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
@@ -225,5 +216,3 @@ public class DataServlet extends HttpServlet {
     }
   }
 }
-
-
