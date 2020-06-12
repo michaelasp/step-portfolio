@@ -14,7 +14,11 @@ package com.google.sps.servlets;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Paths;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +30,26 @@ public class BlobServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    BlobKey blobKey = new BlobKey(request.getParameter("blobKey"));
-    blobstoreService.serve(blobKey, response);
+    String key = request.getParameter("blobKey");
+    System.out.println(Paths.get(".").toAbsolutePath().normalize().toString());
+    if (key.equals("")) {
+      response.setContentType("image/png");
+      File file = new File("./images/default.png");
+      response.setContentLength((int) file.length());
+      FileInputStream in = new FileInputStream(file);
+      OutputStream out = response.getOutputStream();
+
+      // Copy the contents of the file to the output stream
+      byte[] buf = new byte[1024];
+      int count = 0;
+      while ((count = in.read(buf)) >= 0) {
+        out.write(buf, 0, count);
+      }
+      out.close();
+      in.close();
+    } else {
+      BlobKey blobKey = new BlobKey(key);
+      blobstoreService.serve(blobKey, response);
+    }
   }
 }
