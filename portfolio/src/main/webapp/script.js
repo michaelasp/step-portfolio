@@ -45,7 +45,7 @@ function createCommentDiv(comment) {
     console.log(date);
 
     profileImage.className = "media-left";
-    image.src = comment.imageUrl;
+    image.src = "/get-blob?blobKey=" + comment.blobKey;
     image.className = "media-object img-circle";
     image.style = "width:60px"
     commentDiv.className = "media well";

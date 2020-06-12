@@ -24,13 +24,8 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.images.ImagesService;
-import com.google.appengine.api.images.ImagesServiceFactory;
-import com.google.appengine.api.images.ServingUrlOptions;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +45,7 @@ public class DataServlet extends HttpServlet {
     String name;
     String text;
     long timestamp;
-    String imageUrl;
+    String blobKey;
 
     @Override
     public int compareTo(Comment otherComment) {
@@ -136,7 +131,7 @@ public class DataServlet extends HttpServlet {
       comment.name = (String) entity.getProperty("name");
       comment.text = (String) entity.getProperty("text");
       comment.timestamp = (long) entity.getProperty("timestamp");
-      comment.imageUrl = (String) entity.getProperty("imageUrl");
+      comment.blobKey = (String) entity.getProperty("blobKey");
       comments.add(comment);
     }
   }
@@ -149,7 +144,7 @@ public class DataServlet extends HttpServlet {
     comment.name = getParameter(request, "commenter");
     comment.text = getParameter(request, "comment");
     comment.timestamp = System.currentTimeMillis();
-    comment.imageUrl = getFileUrl(request, "image");
+    comment.blobKey = getBlobKey(request, "image");
 
     comments.add(comment);
     addCommentData(comment);
@@ -161,7 +156,7 @@ public class DataServlet extends HttpServlet {
     commentEntity.setProperty("name", comment.name);
     commentEntity.setProperty("text", comment.text);
     commentEntity.setProperty("timestamp", comment.timestamp);
-    commentEntity.setProperty("imageUrl", comment.imageUrl);
+    commentEntity.setProperty("blobKey", comment.blobKey);
 
     DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
     dataStore.put(commentEntity);
@@ -179,14 +174,14 @@ public class DataServlet extends HttpServlet {
    * Returns a URL that points to the uploaded file, or default profile if the user didn't upload a
    * file.
    */
-  private String getFileUrl(HttpServletRequest request, String formInputElementName) {
+  private String getBlobKey(HttpServletRequest request, String formInputElementName) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
     List<BlobKey> blobKeys = blobs.get("image");
 
     // User submitted form without selecting a file, so we can't get a URL. (dev server)
     if (blobKeys == null || blobKeys.isEmpty()) {
-      return "/images/default.png";
+      return "";
     }
 
     // Our form only contains a single file input, so get the first index.
@@ -196,23 +191,9 @@ public class DataServlet extends HttpServlet {
     BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
     if (blobInfo.getSize() == 0) {
       blobstoreService.delete(blobKey);
-      return "/images/default.png";
+      return "";
     }
 
-    // We could check the validity of the file here, e.g. to make sure it's an image file
-    // https://stackoverflow.com/q/10779564/873165
-
-    // Use ImagesService to get a URL that points to the uploaded file.
-    ImagesService imagesService = ImagesServiceFactory.getImagesService();
-    ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(blobKey);
-
-    // To support running in Google Cloud Shell with AppEngine's devserver, we must use the relative
-    // path to the image, rather than the path returned by imagesService which contains a host.
-    try {
-      URL url = new URL(imagesService.getServingUrl(options));
-      return url.getPath();
-    } catch (MalformedURLException e) {
-      return imagesService.getServingUrl(options);
-    }
+    return blobKey.getKeyString();
   }
 }
