@@ -37,17 +37,25 @@ function fetchFact(){
 function createCommentDiv(comment) {
     let commentDiv = document.createElement("div");
     let mediaBody = document.createElement("div");
+    let profileImage = document.createElement("div")
+    let image = document.createElement("img")
     let user = document.createElement("h4");
     let commentText = document.createElement("p");
     let date = new Date(comment.timestamp).toLocaleTimeString("en-US")
     console.log(date);
 
+    profileImage.className = "media-left";
+    image.src = comment.imageUrl;
+    image.className = "media-object img-circle";
+    image.style = "width:60px"
     commentDiv.className = "media well";
     mediaBody.className = "media-body";
     user.className = "media-heading";
     user.innerHTML = comment.name + " <i><small>at " + date + "</small></i>";
     commentText.innerText = comment.text;
 
+    profileImage.append(image);
+    commentDiv.append(profileImage);
     commentDiv.append(mediaBody);
     mediaBody.append(user);
     mediaBody.append(commentText);
