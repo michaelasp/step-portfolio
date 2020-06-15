@@ -61,7 +61,7 @@ let commentAmount = 2;
 function initPage() {
     fetch("/image-upload").then(
         (response) => {
-            response.text();
+            return response.text();
         })
     .then(
         (imageUrl) => {
@@ -70,6 +70,7 @@ function initPage() {
             formElem.classList.remove("hidden");
         } 
     )
+    fetchComments();
 }
 
 function updateNumber(delta) {
