@@ -11,6 +11,9 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -24,12 +27,20 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/delete-data")
 public class DeleteServlet extends HttpServlet {
+  private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     DatastoreService dataStore = DatastoreServiceFactory.getDatastoreService();
     Query query = new Query("comment");
     PreparedQuery results = dataStore.prepare(query);
     for (Entity entity : results.asIterable()) {
+      String key = (String) entity.getProperty("blobKey");
+      if (!key.equals("")) {
+        BlobKey deleteKey = new BlobKey(key);
+        blobstoreService.delete(deleteKey);
+      }
+
       dataStore.delete(entity.getKey());
     }
     response.setContentType("text/html;");
