@@ -15,6 +15,7 @@
 package com.google.sps;
 
 import java.util.*;
+import java.lang.Math;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
@@ -43,9 +44,10 @@ public final class FindMeetingQuery {
             
         }
         if ((i != allEvents.size() - 1) && curTime.overlaps(allEvents.get(i+1).getWhen())) {
+            start = Math.max(curTime.end(), start);
             cont = true;
         } else {
-            start = curTime.end();
+            start = Math.max(curTime.end(), start);
             cont = false;
         }
 
@@ -57,7 +59,7 @@ public final class FindMeetingQuery {
 
         }
     }
-    if (allEvents.size() == 0) {
+    if (allEvents.size() == 0 && request.getDuration() <= 1440) {
         times.add(TimeRange.fromStartEnd(0, 1440, false));
     }
     return times;
