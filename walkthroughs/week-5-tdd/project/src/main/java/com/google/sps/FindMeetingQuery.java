@@ -14,10 +14,56 @@
 
 package com.google.sps;
 
-import java.util.Collection;
+import java.util.*;
+import java.lang.Math;
 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    throw new UnsupportedOperationException("TODO: Implement this method.");
+    long duration = request.getDuration();
+    ArrayList<Event> allEvents = new ArrayList();
+    Set<String> attendees = new HashSet<String>(request.getAttendees());
+    for (Event event : events) {
+        Set<String> curAttendees = new HashSet<String>(attendees);
+        curAttendees.retainAll(event.getAttendees());
+        if (!(curAttendees.isEmpty())){
+            allEvents.add(event);
+        }
+    }
+    Collections.sort(allEvents);
+
+    ArrayList<TimeRange> times = new ArrayList();
+    int start = 0;
+    Boolean cont = false;
+    for (int i = 0; i < allEvents.size(); i++) {
+        TimeRange curTime = allEvents.get(i).getWhen();
+        if (!cont) {
+            TimeRange curRange = TimeRange.fromStartEnd(start, curTime.start(), false);
+            if ((long) curRange.duration() >= request.getDuration()) {
+                times.add(curRange);
+            }
+            
+        }
+        if ((i != allEvents.size() - 1) && curTime.overlaps(allEvents.get(i+1).getWhen())) {
+            start = Math.max(curTime.end(), start);
+            cont = true;
+        } else {
+            start = Math.max(curTime.end(), start);
+            cont = false;
+        }
+
+        if (i == allEvents.size() - 1) {
+            TimeRange curRange = TimeRange.fromStartEnd(start, 1440, false);
+            if ((long) curRange.duration() >= request.getDuration()) {
+                times.add(curRange);
+            }
+
+        }
+    }
+    if (allEvents.size() == 0 && request.getDuration() <= 1440) {
+        times.add(TimeRange.fromStartEnd(0, 1440, false));
+    }
+    return times;
   }
+  
+
 }
