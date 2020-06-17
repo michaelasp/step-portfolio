@@ -21,17 +21,35 @@ public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     long duration = request.getDuration();
     ArrayList<Event> allEvents = new ArrayList();
+    ArrayList<Event> allEventsOptional = new ArrayList();
     Set<String> attendees = new HashSet<String>(request.getAttendees());
+    Set<String> allAttendeesOptional = new HashSet<String>(request.getAttendees());
+    allAttendeesOptional.addAll(request.getOptionalAttendees());
     //Add all events that attendees go to
     for (Event event : events) {
         Set<String> curAttendees = new HashSet<String>(attendees);
+        Set<String> curAttendeesOptional = new HashSet<String>(allAttendeesOptional);
         curAttendees.retainAll(event.getAttendees());
+        curAttendeesOptional.retainAll(event.getAttendees());
         if (!(curAttendees.isEmpty())){
-            allEvents.add(event);
+            allEvents.add(event);    
+        } 
+        if(!(curAttendeesOptional.isEmpty())){
+            allEventsOptional.add(event);
         }
+        
     }
     Collections.sort(allEvents);
+    Collections.sort(allEventsOptional);
+    ArrayList<TimeRange> timesOptional = getTimes(allEventsOptional, request);
+    if (!(timesOptional.isEmpty())){
+        return timesOptional;
+    }
+    ArrayList<TimeRange> times = getTimes(allEvents, request);
+    return times;
+  }
 
+  private ArrayList<TimeRange> getTimes(ArrayList<Event> allEvents, MeetingRequest request) {
     ArrayList<TimeRange> times = new ArrayList();
     int start = 0;
     Boolean cont = false;
@@ -58,7 +76,6 @@ public final class FindMeetingQuery {
             if ((long) curRange.duration() >= request.getDuration()) {
                 times.add(curRange);
             }
-
         }
     }
     if (allEvents.size() == 0 && request.getDuration() <= TimeRange.END_OF_DAY) {
