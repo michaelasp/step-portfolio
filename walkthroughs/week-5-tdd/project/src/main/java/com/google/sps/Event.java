@@ -23,7 +23,7 @@ import java.util.Set;
  * Event is the container class for when a specific group of people are meeting and are therefore
  * busy. Events are considered read-only.
  */
-public final class Event {
+public final class Event implements Comparable<Event>{
   private final String title;
   private final TimeRange when;
   private final Set<String> attendees = new HashSet<>();
@@ -74,6 +74,9 @@ public final class Event {
     // Return the attendees as an unmodifiable set so that the caller can't change our
     // internal data.
     return Collections.unmodifiableSet(attendees);
+  }
+  public int compareTo(Event eventB) {
+      return this.getWhen().start() - eventB.getWhen().start();
   }
 
   @Override
