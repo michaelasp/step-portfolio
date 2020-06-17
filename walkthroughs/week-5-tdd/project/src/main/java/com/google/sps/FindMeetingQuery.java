@@ -42,7 +42,7 @@ public final class FindMeetingQuery {
     Collections.sort(allEvents);
     Collections.sort(allEventsOptional);
     ArrayList<TimeRange> timesOptional = getTimes(allEventsOptional, request);
-    if (!(timesOptional.isEmpty())){
+    if (!(timesOptional.isEmpty()) || request.getAttendees().size() == 0){
         return timesOptional;
     }
     ArrayList<TimeRange> times = getTimes(allEvents, request);
